@@ -1,6 +1,7 @@
 import glob
 import pynvim
 import xml.etree.ElementTree as xml
+from .formats import CoverageCloverXml
 
 
 @pynvim.plugin
@@ -66,25 +67,14 @@ class CoveragePlugin:
             )
 
     def try_display(self, filepath, coverage_path):
-        cov = xml.parse(coverage_path)
+        fmt = CoverageCloverXml.from_file(filepath, coverage_path)
+        lines = fmt.lines()
 
-        for f in cov.getroot().findall("*/file"):
-            if f.attrib["name"].endswith(filepath):
-                self.do_display(filepath, f)
-                return True
+        if not lines:
+            return False
 
-        return False
-
-    def do_display(self, filepath, file_element: xml.Element):
-        covered = []
-
-        for line in file_element.findall("line"):
-            if not int(line.attrib["count"]):
-                continue
-
-            covered.append(int(line.attrib["num"]))
-
-        self.covered = self.nvim.funcs.matchaddpos(self.highlight_group, covered)
+        self.covered = self.nvim.funcs.matchaddpos(self.highlight_group, lines)
+        return True
 
     @pynvim.command("CoverageHide")
     def hide(self):

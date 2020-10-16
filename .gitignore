@@ -1,5 +1,7 @@
 __pycache__/
 vendor/
+.coverage/
 .vim/
 .phpunit.cache*
 cov.xml
+*.pyc
