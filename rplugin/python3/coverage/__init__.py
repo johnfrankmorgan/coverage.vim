@@ -94,3 +94,10 @@ class CoveragePlugin:
         self.nvim.out_write(f"{self.covered}\n")
         self.nvim.funcs.matchdelete(self.covered)
         self.covered = None
+
+    @pynvim.command("CoverageToggle")
+    def toggle(self):
+        if not self.covered:
+            self.display()
+        else:
+            self.hide()
