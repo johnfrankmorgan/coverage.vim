@@ -91,7 +91,6 @@ class CoveragePlugin:
         if not self.covered:
             return
 
-        self.nvim.out_write(f"{self.covered}\n")
         self.nvim.funcs.matchdelete(self.covered)
         self.covered = None
 
