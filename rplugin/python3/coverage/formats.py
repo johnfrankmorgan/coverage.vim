@@ -26,9 +26,13 @@ class Format(ABC):
 class CoveragePyJson(Format):
     def init(self):
         self.json: dict = json.loads(self.coverage)
-        print(self.json)
 
     def lines(self) -> Union[List[int], None]:
+        """
+        >>> c = CoveragePyJson("t/t", '{"files": {"t": {"executed_lines": [1, 2, 3]}}}')
+        >>> c.lines()
+        [1, 2, 3]
+        """
         for localpath, details in self.json["files"].items():
             if not self.filepath.endswith(localpath):
                 continue
@@ -43,15 +47,20 @@ class CoverageCloverXml(Format):
         self.xml = xml.fromstring(self.coverage)
 
     def lines(self) -> Union[List[int], None]:
+        """
+        >>> c = CoverageCloverXml("t", '<root><p><file name="t"><line num="1" count="1" /></file></p></root>')
+        >>> c.lines()
+        [1]
+        """
         for f in self.xml.findall("*/file"):
             if not f.attrib["name"].endswith(self.filepath):
                 continue
 
             lines = []
 
-            for line in f.findall('line'):
-                if int(line.attrib['count']):
-                    lines.append(int(line.attrib['num']))
+            for line in f.findall("line"):
+                if int(line.attrib["count"]):
+                    lines.append(int(line.attrib["num"]))
 
             return lines
 
