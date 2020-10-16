@@ -5,12 +5,13 @@ A simple remote plugin for neovim to display test coverage highlighting from a c
 To set the search paths for clover files:
 ```vim
 let g:coverage_paths = '.coverage/cov.xml'  " the default is 'cov.xml'
-" or
-let g:coverage_paths = ['**/cov.xml']
+" Or specify a list of glob patterns
+let g:coverage_paths = ['.coverage/**/cov.xml', '.somewhere/**/*.xml']
 ```
 
-To set the highlight used when displaying coverage:
+To configure the highlights used for covered lines:
 ```vim
-" the default is
-highlight CoveredLine ctermbg=darkgreen guibg=darkgreen
+let g:coverage_color = {'highlight': 'CoveredLine', 'ctermbg': 'darkgreen', 'guibg': 'darkgreen'}
+" Or use an existing highlight group
+let g:coverage_color = {'highlight': 'Keyword'}
 ```
