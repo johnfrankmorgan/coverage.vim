@@ -1,6 +1,5 @@
 import glob
 import pynvim
-import xml.etree.ElementTree as xml
 from .formats import CoverageCloverXml
 
 
@@ -9,7 +8,7 @@ class CoveragePlugin:
     def __init__(self, nvim: pynvim.Nvim):
         self.nvim = nvim
         self.color: dict = None
-        self.covered = None
+        self.covered: list = None
 
     @property
     def highlight_group(self):
@@ -73,20 +72,27 @@ class CoveragePlugin:
         if not lines:
             return False
 
-        self.covered = self.nvim.funcs.matchaddpos(self.highlight_group, lines)
+        self.covered = []
+        for line in lines:
+            self.covered.append(
+                self.nvim.funcs.matchaddpos(self.highlight_group, [line])
+            )
+
         return True
 
     @pynvim.command("CoverageHide")
     def hide(self):
-        if not self.covered:
+        if self.covered is None:
             return
 
-        self.nvim.funcs.matchdelete(self.covered)
+        for line in self.covered:
+            self.nvim.funcs.matchdelete(line)
+
         self.covered = None
 
     @pynvim.command("CoverageToggle")
     def toggle(self):
-        if not self.covered:
+        if self.covered is None:
             self.display()
         else:
             self.hide()

@@ -52,7 +52,7 @@ class CoverageCloverXml(Format):
         >>> c.lines()
         [1]
         """
-        for f in self.xml.findall("*/file"):
+        for f in self.xml.findall(".//file"):
             if not f.attrib["name"].endswith(self.filepath):
                 continue
 
